@@ -401,7 +401,7 @@ public class WindowController {
     }
 
     public int getTotalStock() {
-       return products.stream().mapToInt(Product::getStock).sum();
+        return products.stream().mapToInt(Product::getStock).sum();
     }
 
     public void setTotalStock(int totalStock) {
@@ -463,4 +463,16 @@ public class WindowController {
     public void setExcelOpts(ExcelOptions excelOpts) {
         this.excelOpts = excelOpts;
     }
+
+    /*
+    arreglar pdf y precio con comas
+    asegurarse de que la tabla con java y con dataexport son iguales
+    hacer header igual que el de pablo
+
+    panelgroup en el facet 
+
+    problemas con las fechas, muestra un dia antes pero filtra bien
+
+    que coño hace esto exactamente products.stream().mapToInt(Product::getStock).sum()
+     */
 }

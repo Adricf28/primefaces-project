@@ -6,15 +6,17 @@
                 xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
     <f:facet name="header">
-        <h:outputText value="Productos" />
-        
-        <p:commandButton icon="pi pi-file-excel" styleClass="ui-button-success">
-            <p:dataExporter type="xls" 
-                            target="mainForm:productTabs:dt" 
-                            fileName="products"
-                            options="#{WindowController.excelOpts}"/>
-        </p:commandButton>
-        
-        <h:outputText value="Total: #{WindowController.products.size()}"/>
+        <h:panelGroup styleClass="products-header">
+            <h:outputText value="Productos" />
+
+            <p:commandButton icon="pi pi-file-excel" styleClass="ui-button-success">
+                <p:dataExporter type="xls" 
+                                target="mainForm:productTabs:dt" 
+                                fileName="products"
+                                options="#{WindowController.excelOpts}"/>
+            </p:commandButton>
+
+            <h:outputText value="Total: #{WindowController.products.size()}"/>
+        </h:panelGroup>
     </f:facet>
 </ui:composition>
