@@ -49,10 +49,25 @@
                 .mleft-1 {
                     margin-left: .3rem !important;
                 }
-
-                .products-header {
-                    background-color: blue !important;
+                
+                body .ui-datatable .ui-datatable-header {
+                    background-color: dodgerblue !important;
                     color: white !important;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                }
+                
+                .header-actions {
+                    display: flex; 
+                    text-align: center; 
+                    align-items: center;
+                    gap: .3rem;
+                }
+                
+                .header-excel {
+                    width: 2rem !important; 
+                    height: 2rem !important;
                 }
             </style>
 
@@ -136,11 +151,11 @@
                                 <h:outputText value="#{product.id}"/>
                             </p:column>
 
-                            <p:column headerText="Description" sortBy="#{product.description}" filterBy="#{product.description}">
+                            <p:column headerText="Description" sortBy="#{product.description}">
                                 <h:outputText value="#{product.description}" />
                             </p:column>
 
-                            <p:column headerText="Date"  sortBy="#{product.date}" filterBy="#{product.dateFormatted}">
+                            <p:column headerText="Date"  sortBy="#{product.date}">
                                 <h:outputText value="#{product.date}" >
                                     <f:convertDateTime pattern="dd/MM/yyyy"/>
                                 </h:outputText>
@@ -156,7 +171,7 @@
                                 <p:selectBooleanCheckbox value="#{product.enBaja}" disabled="true" styleClass="readonly"/>
                             </p:column>
 
-                            <p:column headerText="Type" sortBy="#{product.type.name}" filterBy="#{product.type.name}">
+                            <p:column headerText="Type" sortBy="#{product.type.name}">
                                 <h:outputText value="#{product.type.name}" />
                             </p:column>
 

@@ -333,7 +333,7 @@ public class WindowController {
                 row.createCell(column++).setCellValue(products.get(i).getDateFormatted());
 
                 CellStyle doubleStyle = wb.createCellStyle();
-                doubleStyle.setDataFormat(format.getFormat("#,##"));
+                doubleStyle.setDataFormat(format.getFormat("#.##0,00"));
                 Cell priceCell = row.createCell(column++);
                 priceCell.setCellValue(products.get(i).getPrice());
                 priceCell.setCellStyle(doubleStyle);
@@ -463,16 +463,4 @@ public class WindowController {
     public void setExcelOpts(ExcelOptions excelOpts) {
         this.excelOpts = excelOpts;
     }
-
-    /*
-    arreglar pdf y precio con comas
-    asegurarse de que la tabla con java y con dataexport son iguales
-    hacer header igual que el de pablo
-
-    panelgroup en el facet 
-
-    problemas con las fechas, muestra un dia antes pero filtra bien
-
-    que coño hace esto exactamente products.stream().mapToInt(Product::getStock).sum()
-     */
 }
