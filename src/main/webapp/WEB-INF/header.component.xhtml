@@ -6,25 +6,25 @@
                 xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
     <f:facet name="header">
-        <h:panelGroup>
+        <h:panelGroup rendered="#{renderCondition}">
             <div>
-                <h:outputText value="Productos" />
+                <h:outputText value="#{title}" />
             </div>
 
             <div class="header-actions">
                 <div class="ui-inputgroup" style="height: 2rem;">
                     <span class="ui-inputgroup-addon"><i class="pi pi-search"></i></span>
-                    <p:inputText placeholder="Search" id="dtGlobalFilter" onkeyup="PF('dt').filter()"/>      
+                    <p:inputText placeholder="Search" id="globalFilter"  onkeyup="PF('#{tableReference}').filter()"/>      
                 </div>
 
-                <p:commandButton icon="pi pi-file-excel" styleClass="ui-button-success header-excel">
+                <p:commandButton rendered="#{dataExporterRenderCondition}" icon="pi pi-file-excel" styleClass="ui-button-success header-excel">
                     <p:dataExporter type="xls" 
-                                    target="mainForm:productTabs:dt" 
-                                    fileName="products"
-                                    options="#{WindowController.excelOpts}"/>
+                                    target="#{dataExporterTarget}" 
+                                    fileName="#{dataExporterFilename}"
+                                    options="#{dataExporterOptions}"/>
                 </p:commandButton>
 
-                <h:outputText value="Total: #{WindowController.products.size()}"/>
+                <h:outputText value="Total: #{total}"/>
             </div>
         </h:panelGroup>
     </f:facet>

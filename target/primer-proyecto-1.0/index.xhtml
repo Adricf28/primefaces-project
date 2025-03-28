@@ -49,7 +49,7 @@
                 .mleft-1 {
                     margin-left: .3rem !important;
                 }
-                
+
                 body .ui-datatable .ui-datatable-header {
                     background-color: dodgerblue !important;
                     color: white !important;
@@ -57,16 +57,16 @@
                     justify-content: space-between;
                     align-items: center;
                 }
-                
+
                 .header-actions {
-                    display: flex; 
-                    text-align: center; 
+                    display: flex;
+                    text-align: center;
                     align-items: center;
                     gap: .3rem;
                 }
-                
+
                 .header-excel {
-                    width: 2rem !important; 
+                    width: 2rem !important;
                     height: 2rem !important;
                 }
             </style>
@@ -91,9 +91,13 @@
                                      ajax="false"
                                      styleClass="ui-button-success mleft-1"/>
 
-                    <p:commandButton icon="pi pi-file-pdf" styleClass="ui-button-success mleft-1">
+                    <p:commandButton icon="pi pi-file-pdf" styleClass="ui-button-danger mleft-1">
                         <p:dataExporter type="pdf" target="mainForm:productTabs:dt" fileName="products"/>
                     </p:commandButton>
+
+                    <p:datePicker placeholder="Select date" styleClass="mleft-1" selectionMode="range" onchange="PF('dt').filter()" converter="javax.faces.DateTime">
+                        <p:ajax event="dateSelect" listener="#{WindowController.dateFilter}" update="mainForm" />
+                    </p:datePicker>
                 </p:toolbarGroup>
 
                 <p:toolbarGroup>
@@ -126,11 +130,21 @@
                                      selectionMode="single"
                                      selection="#{WindowController.selectedProduct}"
                                      var="product" 
-                                     value="#{WindowController.products}">
+                                     value="#{WindowController.products}"
+                                     filteredValue="#{WindowController.productsFiltered}">
 
                             <p:ajax event="rowSelect" listener="#{WindowController.orderRows()}" update="mainForm" />
 
-                            <ui:include src="/WEB-INF/header.component.xhtml" />
+                            <ui:include src="/WEB-INF/header.component.xhtml">
+                                <ui:param name="renderCondition" value="#{WindowController.products ne null}"/>
+                                <ui:param name="title" value="Productos"/>
+                                <ui:param name="tableReference" value="dt"/>
+                                <ui:param name="dataExporterRenderCondition" value="#{WindowController.products.size() gt 0}" />
+                                <ui:param name="dataExporterTarget" value="mainForm:productTabs:dt"/>
+                                <ui:param name="dataExporterFilename" value="productos"/>
+                                <ui:param name="dataExporterOptions" value="#{WindowController.excelOpts}"/>
+                                <ui:param name="total" value="#{WindowController.products.size()}"/>
+                            </ui:include>
 
                             <p:column exportable="false">
                                 <p:commandButton icon="pi pi-pencil" 
@@ -239,17 +253,20 @@
                                  selectionMode="single"
                                  selection="#{WindowController.selectedProduct}"
                                  var="product" 
-                                 value="#{WindowController.lazyModel}">
+                                
+                                 filteredValue="#{WindowController.productsLazyFiltered}"
+                                 value="#{WindowController.lazyModel.datasource}">
 
-                        <f:facet name="header">
-                            <div class="right-aligned">
-                                <div>
-                                    <p:inputText rendered="#{not empty WindowController.products}" id="globalFilter" onkeyup="PF('dtLazy').filter()" style="width:10rem"
-                                                 placeholder="Enter keyword" />
-                                </div>
-                            </div>
-
-                        </f:facet>
+                        <ui:include src="/WEB-INF/header.component.xhtml" >
+                            <ui:param name="renderCondition" value="#{not empty WindowController.products}"/>
+                            <ui:param name="title" value="Productos"/>
+                            <ui:param name="tableReference" value="dtLazy"/>
+                            <ui:param name="dataExporterRenderCondition" value="#{WindowController.products.size() ge 1}" />
+                            <ui:param name="dataExporterTarget" value="mainForm:productTabs:dt"/>
+                            <ui:param name="dataExporterFilename" value="productos"/>
+                            <ui:param name="dataExporterOptions" value="#{WindowController.excelOpts}"/>
+                            <ui:param name="total" value="#{WindowController.products.size()}"/>
+                        </ui:include>
 
                         <p:ajax event="rowSelect" listener="#{WindowController.orderRows()}" update="mainForm" />
 

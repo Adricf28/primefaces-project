@@ -7,7 +7,6 @@ package entidades;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
@@ -30,6 +29,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.export.ExcelOptions;
+import org.primefaces.event.SelectEvent;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.charts.ChartData;
 import org.primefaces.model.charts.axes.cartesian.CartesianScales;
@@ -54,6 +54,8 @@ public class WindowController {
     private List<Type> types;
     private List<Category> categories;
     private List<Product> products;
+    private List<Product> productsFiltered;
+    private List<Product> productsLazyFiltered;
     private List<Product> allProducts;
     private Product selectedProduct;
     private int idTypeSelected = 0;
@@ -61,21 +63,20 @@ public class WindowController {
     private boolean updating;
     private BarChartModel barModel;
     private LineChartModel lineModel;
-    private LazyDataModel<Product> lazyModel;
+    private LazyProductDataModel lazyModel = new LazyProductDataModel(products);
     private ExcelOptions excelOpts;
 
     @PostConstruct
     public void init() {
         types = new ArrayList<>();
         categories = new ArrayList<>();
-        products = new ArrayList<>();
         allProducts = new ArrayList<>();
         this.fillTypes();
         this.fillCategories();
-        this.fillAllProducts(50);
-        createBarModel();
-        createLineModel();
-        lazyModel = new LazyProductDataModel(products);
+        this.fillAllProducts(2);
+        //createBarModel();
+        //createLineModel();
+        //lazyModel = new LazyProductDataModel(products);
         customizeExcel();
     }
 
@@ -285,22 +286,7 @@ public class WindowController {
         createBarModel();
         createLineModel();
         lazyModel = new LazyProductDataModel(products);
-    }
-
-    public void autoSizeColumns(Workbook workbook) {
-        int numberOfSheets = workbook.getNumberOfSheets();
-        for (int i = 0; i < numberOfSheets; i++) {
-            Sheet sheet = workbook.getSheetAt(i);
-            if (sheet.getPhysicalNumberOfRows() > 0) {
-                Row row = sheet.getRow(sheet.getFirstRowNum());
-                Iterator<Cell> cellIterator = row.cellIterator();
-                while (cellIterator.hasNext()) {
-                    Cell cell = cellIterator.next();
-                    int columnIndex = cell.getColumnIndex();
-                    sheet.autoSizeColumn(columnIndex);
-                }
-            }
-        }
+        totalStock=products.stream().mapToInt(Product::getStock).sum();
     }
 
     public void exportExcel() {
@@ -367,6 +353,10 @@ public class WindowController {
         excelOpts.setFacetFontSize("12");
         excelOpts.setCellFontSize("10");
     }
+    
+    public void dateFilter(SelectEvent<Date> event) {
+        System.out.println(event);
+    }
 
     public List<Product> getProducts() {
         return products;
@@ -401,7 +391,7 @@ public class WindowController {
     }
 
     public int getTotalStock() {
-        return products.stream().mapToInt(Product::getStock).sum();
+        return totalStock;
     }
 
     public void setTotalStock(int totalStock) {
@@ -448,11 +438,11 @@ public class WindowController {
         this.lineModel = lineModel;
     }
 
-    public LazyDataModel<Product> getLazyModel() {
+    public LazyProductDataModel getLazyModel() {
         return lazyModel;
     }
 
-    public void setLazyModel(LazyDataModel<Product> lazyModel) {
+    public void setLazyModel(LazyProductDataModel lazyModel) {
         this.lazyModel = lazyModel;
     }
 
@@ -463,4 +453,29 @@ public class WindowController {
     public void setExcelOpts(ExcelOptions excelOpts) {
         this.excelOpts = excelOpts;
     }
+
+    public List<Product> getProductsFiltered() {
+        return productsFiltered;
+    }
+
+    public void setProductsFiltered(List<Product> productsFiltered) {
+        this.productsFiltered = productsFiltered;
+    }
+
+    public List<Product> getProductsLazyFiltered() {
+        return productsLazyFiltered;
+    }
+
+    public void setProductsLazyFiltered(List<Product> productsLazyFiltered) {
+        this.productsLazyFiltered = productsLazyFiltered;
+    }
+    
+    /*
+    arreglar pdf
+    asegurarse de que la tabla con java y con dataexport son iguales
+
+    - filtro fecha inicio fecha fin con dos inputs y filtrar al darle a buscar al lado de mostrar todos
+    - volver a poner filterby en las columnas
+    - mostrar header si se ha buscado alguna vez
+    */
 }
