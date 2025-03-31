@@ -69,16 +69,34 @@
                     width: 2rem !important;
                     height: 2rem !important;
                 }
+
+                .toolbar {
+                    display: flex;
+                    justify-content: space-between;
+                }
+
+                .toolbar-group {
+                    display: flex;
+                    gap: .3rem;
+                }
+
+                body .ui-datatable thead th .ui-sortable-column-icon.ui-icon-carat-2-n-s:before {
+                    display: none;
+                }
+
+                .ui-datatable .ui-column-filter {
+                    display: none;
+                }
             </style>
 
-            <p:toolbar>
-                <p:toolbarGroup>
+            <p:toolbar styleClass="toolbar">
+                <p:toolbarGroup styleClass="toolbar-group">
                     <p:commandButton update="dialogs:manage-product-content" 
                                      icon="pi pi-plus" 
                                      actionListener="#{WindowController.openNew}" 
                                      oncomplete="PF('manageProductDialog').show()" />
 
-                    <p:commandButton icon="pi pi-file-excel" styleClass="ui-button-success mleft-1">
+                    <p:commandButton icon="pi pi-file-excel" styleClass="ui-button-success">
                         <p:dataExporter type="xls" 
                                         target="mainForm:productTabs:dt" 
                                         fileName="products"
@@ -89,18 +107,18 @@
                                      icon="pi pi-file-excel" 
                                      actionListener="#{WindowController.exportExcel}"
                                      ajax="false"
-                                     styleClass="ui-button-success mleft-1"/>
+                                     styleClass="ui-button-success"/>
 
-                    <p:commandButton icon="pi pi-file-pdf" styleClass="ui-button-danger mleft-1">
+                    <p:commandButton icon="pi pi-file-pdf" styleClass="ui-button-danger">
                         <p:dataExporter type="pdf" target="mainForm:productTabs:dt" fileName="products"/>
                     </p:commandButton>
 
-                    <p:datePicker placeholder="Select date" styleClass="mleft-1" selectionMode="range" onchange="PF('dt').filter()" converter="javax.faces.DateTime">
-                        <p:ajax event="dateSelect" listener="#{WindowController.dateFilter}" update="mainForm" />
-                    </p:datePicker>
+
+                    <p:datePicker id="startDateFilter" value="#{WindowController.startDateFilter}" locale="es" monthNavigator="true" pattern="dd/MM/yyyy" placeholder="Fecha Inicio"/>
+                    <p:datePicker id="finishDateFilter" value="#{WindowController.finishDateFilter}" locale="es" monthNavigator="true" pattern="dd/MM/yyyy" placeholder="Fecha Fin"/>
                 </p:toolbarGroup>
 
-                <p:toolbarGroup>
+                <p:toolbarGroup styleClass="toolbar-group">
                     <p:selectOneMenu id="type" value="#{WindowController.idTypeSelected}" style="margin-right: .3rem;">
                         <f:selectItem itemLabel="Mostrar todos" itemValue="0" />
                         <f:selectItems value="#{WindowController.types}" var="type" itemLabel="#{type.name}" itemValue="#{type.id}"/>
@@ -138,6 +156,7 @@
                             <ui:include src="/WEB-INF/header.component.xhtml">
                                 <ui:param name="renderCondition" value="#{WindowController.products ne null}"/>
                                 <ui:param name="title" value="Productos"/>
+                                <ui:param name="iterable" value="#{WindowController.totalStockMap}"/>
                                 <ui:param name="tableReference" value="dt"/>
                                 <ui:param name="dataExporterRenderCondition" value="#{WindowController.products.size() gt 0}" />
                                 <ui:param name="dataExporterTarget" value="mainForm:productTabs:dt"/>
@@ -159,17 +178,23 @@
                                                  update="mainForm">
                                     <p:confirm header="Confirm Delete" message="Are you sure to delete the product?" icon="pi pi-exclamation-triangle" />
                                 </p:commandButton>
+                                
+                                <p:commandButton icon="pi pi-info-circle" 
+                                                 actionListener="#{WindowController.productDetail(product)}" 
+                                                 styleClass="edit-button rounded-button action-btns"
+                                                 update="mainForm">
+                                </p:commandButton>
                             </p:column>
 
-                            <p:column headerText="Id" sortBy="#{product.id}" styleClass="right-aligned">
+                            <p:column headerText="Id" sortBy="#{product.id}" styleClass="right-aligned" style="width: 20px">
                                 <h:outputText value="#{product.id}"/>
                             </p:column>
 
-                            <p:column headerText="Description" sortBy="#{product.description}">
+                            <p:column headerText="Description" sortBy="#{product.description}" filterBy="#{product.description}">
                                 <h:outputText value="#{product.description}" />
                             </p:column>
 
-                            <p:column headerText="Date"  sortBy="#{product.date}">
+                            <p:column headerText="Date"  sortBy="#{product.date}" filterBy="#{product.dateFormatted}">
                                 <h:outputText value="#{product.date}" >
                                     <f:convertDateTime pattern="dd/MM/yyyy"/>
                                 </h:outputText>
@@ -185,24 +210,13 @@
                                 <p:selectBooleanCheckbox value="#{product.enBaja}" disabled="true" styleClass="readonly"/>
                             </p:column>
 
-                            <p:column headerText="Type" sortBy="#{product.type.name}">
+                            <p:column headerText="Type" sortBy="#{product.type.name}" filterBy="#{product.type.name}">
                                 <h:outputText value="#{product.type.name}" />
                             </p:column>
 
                             <p:column headerText="Stock" sortBy="#{product.stock}" styleClass="right-aligned">
                                 <h:outputText value="#{product.stock}" />
                             </p:column>
-
-                            <p:columnGroup type="footer">
-                                <p:row>
-                                    <p:column colspan="7" styleClass="right-aligned" footerText="Total stock:"/>
-                                    <p:column styleClass="right-aligned">
-                                        <f:facet name="footer">
-                                            <h:outputText value="#{WindowController.totalStock}"/>
-                                        </f:facet>
-                                    </p:column>
-                                </p:row>
-                            </p:columnGroup>
                         </p:dataTable>
 
                         <p:dataTable rendered="#{WindowController.selectedProduct ne null}" 
@@ -253,13 +267,14 @@
                                  selectionMode="single"
                                  selection="#{WindowController.selectedProduct}"
                                  var="product" 
-                                
+
                                  filteredValue="#{WindowController.productsLazyFiltered}"
                                  value="#{WindowController.lazyModel.datasource}">
 
                         <ui:include src="/WEB-INF/header.component.xhtml" >
                             <ui:param name="renderCondition" value="#{not empty WindowController.products}"/>
                             <ui:param name="title" value="Productos"/>
+                            <ui:param name="iterable" value="#{WindowController.totalStockMap}"/>
                             <ui:param name="tableReference" value="dtLazy"/>
                             <ui:param name="dataExporterRenderCondition" value="#{WindowController.products.size() ge 1}" />
                             <ui:param name="dataExporterTarget" value="mainForm:productTabs:dt"/>
@@ -316,17 +331,6 @@
                         <p:column headerText="Stock" sortBy="#{product.stock}" styleClass="right-aligned">
                             <h:outputText value="#{product.stock}" />
                         </p:column>
-
-                        <p:columnGroup type="footer">
-                            <p:row>
-                                <p:column colspan="7" styleClass="right-aligned" footerText="Total stock:"/>
-                                <p:column styleClass="right-aligned">
-                                    <f:facet name="footer">
-                                        <h:outputText value="#{WindowController.totalStock}"/>
-                                    </f:facet>
-                                </p:column>
-                            </p:row>
-                        </p:columnGroup>
                     </p:dataTable>
 
                     <p:dataTable rendered="#{WindowController.selectedProduct ne null}" 

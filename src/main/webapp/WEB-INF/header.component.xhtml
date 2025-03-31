@@ -11,6 +11,12 @@
                 <h:outputText value="#{title}" />
             </div>
 
+            <div>
+                <c:forEach var="item" items="#{iterable}">
+                    <h:outputText style="margin-right: 1rem;" value="| #{item.key}: #{item.value}"/>
+                </c:forEach>
+            </div>
+
             <div class="header-actions">
                 <div class="ui-inputgroup" style="height: 2rem;">
                     <span class="ui-inputgroup-addon"><i class="pi pi-search"></i></span>

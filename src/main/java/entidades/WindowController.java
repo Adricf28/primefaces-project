@@ -6,7 +6,9 @@ package entidades;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
@@ -30,7 +32,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.export.ExcelOptions;
 import org.primefaces.event.SelectEvent;
-import org.primefaces.model.LazyDataModel;
+import org.primefaces.model.DialogFrameworkOptions;
 import org.primefaces.model.charts.ChartData;
 import org.primefaces.model.charts.axes.cartesian.CartesianScales;
 import org.primefaces.model.charts.axes.cartesian.linear.CartesianLinearAxes;
@@ -59,24 +61,21 @@ public class WindowController {
     private List<Product> allProducts;
     private Product selectedProduct;
     private int idTypeSelected = 0;
-    private int totalStock;
     private boolean updating;
     private BarChartModel barModel;
     private LineChartModel lineModel;
     private LazyProductDataModel lazyModel = new LazyProductDataModel(products);
     private ExcelOptions excelOpts;
+    private Date startDateFilter;
+    private Date finishDateFilter;
+    private HashMap<String, Double> totalStockMap;
+    private HashMap<String, Double> totalPriceMap;
 
     @PostConstruct
     public void init() {
-        types = new ArrayList<>();
-        categories = new ArrayList<>();
-        allProducts = new ArrayList<>();
         this.fillTypes();
         this.fillCategories();
-        this.fillAllProducts(2);
-        //createBarModel();
-        //createLineModel();
-        //lazyModel = new LazyProductDataModel(products);
+        this.fillAllProducts(20);
         customizeExcel();
     }
 
@@ -95,6 +94,7 @@ public class WindowController {
     }
 
     public void fillTypes() {
+        types = new ArrayList<>();
         types.add(new Type(1, "Type 1"));
         types.add(new Type(2, "Type 2"));
         types.add(new Type(3, "Type 3"));
@@ -103,6 +103,7 @@ public class WindowController {
     }
 
     public void fillCategories() {
+        categories = new ArrayList<>();
         categories.add(new Category(1, "Category 1", 1));
         categories.add(new Category(2, "Category 2", 2));
         categories.add(new Category(3, "Category 3", 3));
@@ -115,8 +116,12 @@ public class WindowController {
     }
 
     public void fillAllProducts(int total) {
+        allProducts = new ArrayList<>();
+        Random r = new Random();
         for (int i = 0; i < total; i++) {
-            allProducts.add(new Product((i + 1), "Product " + (i + 1), new Date(), ((int) (Math.random() * 30 + 1)), Math.random() < 0.5, this.getRandomType(), ((int) (Math.random() * 20 + 1)), getRandomCategories()));
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.DAY_OF_YEAR, r.nextInt(365));
+            allProducts.add(new Product((i + 1), "Product " + (i + 1), calendar.getTime(), ((int) (Math.random() * 30 + 1)), Math.random() < 0.5, this.getRandomType(), ((int) (Math.random() * 20 + 1)), getRandomCategories()));
         }
     }
 
@@ -283,10 +288,37 @@ public class WindowController {
                 }
             }
         }
+
+        List<Product> dateFilteredProducts = new ArrayList<>();
+        if (startDateFilter != null && finishDateFilter != null) {
+            for (Product product : products) {
+                if (product.getDate().after(startDateFilter) && product.getDate().before(finishDateFilter)) {
+                    dateFilteredProducts.add(product);
+                }
+            }
+            products = dateFilteredProducts;
+        } else if (startDateFilter == null && finishDateFilter != null) {
+            for (Product product : products) {
+                if (product.getDate().before(finishDateFilter)) {
+                    dateFilteredProducts.add(product);
+                }
+            }
+            products = dateFilteredProducts;
+        } else if (startDateFilter != null && finishDateFilter == null) {
+            for (Product product : products) {
+                if (product.getDate().after(startDateFilter)) {
+                    dateFilteredProducts.add(product);
+                }
+            }
+            products = dateFilteredProducts;
+        }
+
         createBarModel();
         createLineModel();
         lazyModel = new LazyProductDataModel(products);
-        totalStock=products.stream().mapToInt(Product::getStock).sum();
+        totalStockMap = new HashMap();
+        totalStockMap.put("Total Stock", products.stream().mapToDouble(Product::getStock).sum());
+        totalStockMap.put("Total Price", products.stream().mapToDouble(Product::getPrice).sum());
     }
 
     public void exportExcel() {
@@ -353,9 +385,23 @@ public class WindowController {
         excelOpts.setFacetFontSize("12");
         excelOpts.setCellFontSize("10");
     }
-    
+
     public void dateFilter(SelectEvent<Date> event) {
         System.out.println(event);
+    }
+    
+    public void productDetail(Product product) {  
+        DialogFrameworkOptions options = DialogFrameworkOptions.builder()
+                .modal(true)
+                .width("640")
+                .height("340")
+                .contentHeight("100%")
+                .contentWidth("100%")
+                .build();
+        
+        FacesContext.getCurrentInstance().getExternalContext().getFlash().put("test", "test message");
+
+        PrimeFaces.current().dialog().openDynamic("/resources/components/product-detail.xhtml", options, null);
     }
 
     public List<Product> getProducts() {
@@ -388,14 +434,6 @@ public class WindowController {
 
     public void setIdTypeSelected(int idTypeSelected) {
         this.idTypeSelected = idTypeSelected;
-    }
-
-    public int getTotalStock() {
-        return totalStock;
-    }
-
-    public void setTotalStock(int totalStock) {
-        this.totalStock = totalStock;
     }
 
     public List<Category> getCategories() {
@@ -469,13 +507,36 @@ public class WindowController {
     public void setProductsLazyFiltered(List<Product> productsLazyFiltered) {
         this.productsLazyFiltered = productsLazyFiltered;
     }
-    
-    /*
-    arreglar pdf
-    asegurarse de que la tabla con java y con dataexport son iguales
 
-    - filtro fecha inicio fecha fin con dos inputs y filtrar al darle a buscar al lado de mostrar todos
-    - volver a poner filterby en las columnas
-    - mostrar header si se ha buscado alguna vez
-    */
+    public Date getStartDateFilter() {
+        return startDateFilter;
+    }
+
+    public void setStartDateFilter(Date startDateFilter) {
+        this.startDateFilter = startDateFilter;
+    }
+
+    public Date getFinishDateFilter() {
+        return finishDateFilter;
+    }
+
+    public void setFinishDateFilter(Date finishDateFilter) {
+        this.finishDateFilter = finishDateFilter;
+    }
+
+    public HashMap<String, Double> getTotalStockMap() {
+        return totalStockMap;
+    }
+
+    public void setTotalStockMap(HashMap<String, Double> totalStockMap) {
+        this.totalStockMap = totalStockMap;
+    }
+
+    public HashMap<String, Double> getTotalPriceMap() {
+        return totalPriceMap;
+    }
+
+    public void setTotalPriceMap(HashMap<String, Double> totalPriceMap) {
+        this.totalPriceMap = totalPriceMap;
+    }
 }
