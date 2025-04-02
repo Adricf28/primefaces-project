@@ -6,10 +6,12 @@ package entidades;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -68,8 +70,8 @@ public class WindowController {
     private ExcelOptions excelOpts;
     private Date startDateFilter;
     private Date finishDateFilter;
-    private HashMap<String, Double> totalStockMap;
-    private HashMap<String, Double> totalPriceMap;
+    private Map<String, Double> totalStockMap;
+    private Map<String, Double> totalPriceMap;
 
     @PostConstruct
     public void init() {
@@ -91,6 +93,20 @@ public class WindowController {
             randomCategories.add(categories.get(r.nextInt(categories.size())));
         }
         return randomCategories;
+    }
+
+    public List<Product> getRandomProducts(int total) {
+        List<Product> randomProducts = new ArrayList<>();
+        Random r = new Random();
+        for (int i = 0; i < total; i++) {
+            randomProducts.add(allProducts.get(r.nextInt(allProducts.size())));
+        }
+
+        return randomProducts;
+    }
+    
+    public void getOneProduct(int id) {
+        
     }
 
     public void fillTypes() {
@@ -389,8 +405,8 @@ public class WindowController {
     public void dateFilter(SelectEvent<Date> event) {
         System.out.println(event);
     }
-    
-    public void productDetail(Product product) {  
+
+    public void productDetail(Product product) {
         DialogFrameworkOptions options = DialogFrameworkOptions.builder()
                 .modal(true)
                 .width("640")
@@ -398,10 +414,12 @@ public class WindowController {
                 .contentHeight("100%")
                 .contentWidth("100%")
                 .build();
-        
-        FacesContext.getCurrentInstance().getExternalContext().getFlash().put("test", "test message");
 
-        PrimeFaces.current().dialog().openDynamic("/resources/components/product-detail.xhtml", options, null);
+        Map<String, List<String>> params = new HashMap<>();
+        String[] paramList = {product.getDescription()};
+        params.put("productDescription", Arrays.asList(paramList));
+
+        PrimeFaces.current().dialog().openDynamic("/resources/components/product-detail.xhtml", options, params);
     }
 
     public List<Product> getProducts() {
@@ -524,19 +542,24 @@ public class WindowController {
         this.finishDateFilter = finishDateFilter;
     }
 
-    public HashMap<String, Double> getTotalStockMap() {
+    public Map<String, Double> getTotalStockMap() {
         return totalStockMap;
     }
 
-    public void setTotalStockMap(HashMap<String, Double> totalStockMap) {
+    public void setTotalStockMap(Map<String, Double> totalStockMap) {
         this.totalStockMap = totalStockMap;
     }
 
-    public HashMap<String, Double> getTotalPriceMap() {
+    public Map<String, Double> getTotalPriceMap() {
         return totalPriceMap;
     }
 
-    public void setTotalPriceMap(HashMap<String, Double> totalPriceMap) {
+    public void setTotalPriceMap(Map<String, Double> totalPriceMap) {
         this.totalPriceMap = totalPriceMap;
     }
+
+    /*
+    mostrar en el dialogo dinamico la misma tabla que categorias, con el componente header y el propio dialogo debe tener la cabecera azul tambien
+    pasarle datos inventados random
+     */
 }

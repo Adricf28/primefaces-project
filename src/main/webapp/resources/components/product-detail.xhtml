@@ -9,13 +9,28 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit t
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
-    
+
     <h:head>
-        <title>Product</title>
+        <title style="background-color: blue; color: white">#{ProductDetail.productDescription}</title>
     </h:head>
-    
+
     <h:body>
-        <h1>Hola</h1>
-        <h2>#{ProductDetail.testStr}</h2>
+        <p:dataTable id="productDetailDt" 
+                     widgetVar="productDetailDt" 
+                     value="#{ProductDetail.products}" 
+                     var="product">
+
+            <p:column headerText="ID">
+                <h:outputText value="#{product.id}" />
+            </p:column>
+
+            <p:column headerText="Description">
+                <h:outputText value="#{product.description}" />
+            </p:column>
+
+            <p:column headerText="Stock">
+                <h:outputText value="#{product.stock}" />
+            </p:column>
+        </p:dataTable>
     </h:body>
 </html>

@@ -87,6 +87,15 @@
                 .ui-datatable .ui-column-filter {
                     display: none;
                 }
+
+                body .ui-dialog .ui-dialog-titlebar {
+                    background-color: dodgerblue;
+                    color: white;
+                }
+                
+                body .ui-dialog .ui-dialog-titlebar .ui-dialog-titlebar-icon .ui-icon-closethick:before {
+                    color: white;
+                }
             </style>
 
             <p:toolbar styleClass="toolbar">
@@ -178,7 +187,7 @@
                                                  update="mainForm">
                                     <p:confirm header="Confirm Delete" message="Are you sure to delete the product?" icon="pi pi-exclamation-triangle" />
                                 </p:commandButton>
-                                
+
                                 <p:commandButton icon="pi pi-info-circle" 
                                                  actionListener="#{WindowController.productDetail(product)}" 
                                                  styleClass="edit-button rounded-button action-btns"
