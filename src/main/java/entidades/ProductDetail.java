@@ -5,9 +5,8 @@
 package entidades;
 
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
-import java.util.Random;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -20,34 +19,25 @@ import javax.faces.context.FacesContext;
 @ManagedBean(name = "ProductDetail")
 @ViewScoped
 public class ProductDetail {
-
-    private int productId;
     private String productDescription;
     private List<Product> products;
 
     @PostConstruct
     public void init() {
-        productId = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("productId"));
         productDescription = (String) FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("productDescription");
-        products =;
+        fillProducts();
     }
 
-    public void fillAllProducts(int total) {
+    public void fillProducts() {
         products = new ArrayList<>();
-        Random r = new Random();
-        for (int i = 0; i < total; i++) {
-            Calendar calendar = Calendar.getInstance();
-            calendar.add(Calendar.DAY_OF_YEAR, r.nextInt(365));
-            products.add(new Product((i + 1), "Product " + (i + 1), calendar.getTime(), ((int) (Math.random() * 30 + 1)), Math.random() < 0.5, this.getRandomType(), ((int) (Math.random() * 20 + 1)), getRandomCategories()));
-        }
-    }
+        List<Category> categories = new ArrayList<>();
+        categories.add(new Category(1, "Categoria 1", 1));
+        categories.add(new Category(2, "Categoria 2", 2));
+        categories.add(new Category(3, "Categoria 3", 3));
 
-    public int getProductId() {
-        return productId;
-    }
-
-    public void setProductId(int productId) {
-        this.productId = productId;
+        products.add(new Product(1, "Product 1", new Date(), 22.0, true, new Type(1, "Tipo 1"), 0, categories));
+        products.add(new Product(2, "Product 2", new Date(), 10.0, false, new Type(2, "Tipo 2"), 15, categories));
+        products.add(new Product(3, "Product 3", new Date(), 43.0, true, new Type(3, "Tipo 3"), 8, categories));
     }
 
     public List<Product> getProducts() {

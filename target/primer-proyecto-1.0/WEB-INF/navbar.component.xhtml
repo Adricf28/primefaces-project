@@ -1,0 +1,49 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <style>
+        .navbar {
+            background-color: dodgerblue !important;
+            color: white !important;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 8vh;
+            padding: 1rem;
+        }
+
+        .menu-logo-location {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .menu-logo-location p {
+            font-size: 1.2rem;
+        }
+        
+        .menu-logo-location button {
+            background-color: dodgerblue;
+        }
+    </style>
+
+    <div class="navbar">
+        <p:sidebar widgetVar="sidebar">
+            <h2>Menu Lateral</h2>
+        </p:sidebar>
+
+        <div class="menu-logo-location">
+            <p:commandButton icon="pi pi-bars" onclick="PF('sidebar').show()"/>
+            <img src="resources/images/inerttia-logo.png" alt="inerttia logo" width="60px"/>
+            <p>Menu 1 > Submenu 1</p>
+        </div>
+
+        <div>
+        </div>
+    </div>
+</ui:composition>

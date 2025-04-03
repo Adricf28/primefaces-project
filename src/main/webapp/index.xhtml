@@ -9,8 +9,18 @@
     </h:head>
 
     <h:body>
-        <h:form id="mainForm">
+        <ui:include src="/WEB-INF/navbar.component.xhtml" />
+        
+        <h:form id="mainForm" styleClass="mainForm">
             <style>
+                body {
+                    margin: 0;
+                }
+                
+                .mainForm {
+                    padding: 1rem;
+                }
+                
                 .few {
                     background-color: red !important;
                     color: white !important;
@@ -92,7 +102,7 @@
                     background-color: dodgerblue;
                     color: white;
                 }
-                
+
                 body .ui-dialog .ui-dialog-titlebar .ui-dialog-titlebar-icon .ui-icon-closethick:before {
                     color: white;
                 }
@@ -370,7 +380,7 @@
         </h:form>
 
         <h:form id="dialogs">
-            <p:dialog header="Create Product" showEffect="fade" modal="true" responsive="true" widgetVar="manageProductDialog" styleClass="create-product">
+            <p:dialog header="#{WindowController.updating ? 'Update product' : 'Create product'}" showEffect="fade" modal="true" responsive="true" widgetVar="manageProductDialog" styleClass="create-product">
                 <p:outputPanel id="manage-product-content" class="ui-fluid">
                     <p:outputPanel rendered="#{not empty WindowController.selectedProduct}">
                         <div class="field">

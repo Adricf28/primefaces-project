@@ -20,7 +20,17 @@
             <div class="header-actions">
                 <div class="ui-inputgroup" style="height: 2rem;">
                     <span class="ui-inputgroup-addon"><i class="pi pi-search"></i></span>
-                    <p:inputText placeholder="Search" id="globalFilter"  onkeyup="PF('#{tableReference}').filter()"/>      
+
+                    <script>
+                        function checkKey(event) {
+                            if (event.keyCode === 13) {
+                                event.preventDefault();
+                                return true;
+                            }
+                            return false;
+                        }
+                    </script>
+                    <p:inputText placeholder="Search" id="globalFilter" onkeypress="checkKey(event) ? PF('#{tableReference}').filter() : PF('#{tableReference}')" />
                 </div>
 
                 <p:commandButton rendered="#{dataExporterRenderCondition}" icon="pi pi-file-excel" styleClass="ui-button-success header-excel">

@@ -104,10 +104,6 @@ public class WindowController {
 
         return randomProducts;
     }
-    
-    public void getOneProduct(int id) {
-        
-    }
 
     public void fillTypes() {
         types = new ArrayList<>();
