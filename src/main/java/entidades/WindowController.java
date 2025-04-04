@@ -405,8 +405,8 @@ public class WindowController {
     public void productDetail(Product product) {
         DialogFrameworkOptions options = DialogFrameworkOptions.builder()
                 .modal(true)
-                .width("640")
-                .height("340")
+                .width("700")
+                .height("400")
                 .contentHeight("100%")
                 .contentWidth("100%")
                 .build();

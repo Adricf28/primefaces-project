@@ -22,15 +22,22 @@
                     <span class="ui-inputgroup-addon"><i class="pi pi-search"></i></span>
 
                     <script>
-                        function checkKey(event) {
+                        document.addEventListener('keyup', event => {
+                            if (event.keyCode === 8) {
+                                checkKey(event, '#{tableReference}');
+                            }
+                        });
+
+                        function checkKey(event, datatable) {
                             if (event.keyCode === 13) {
                                 event.preventDefault();
-                                return true;
+                                PF(datatable).filter();
+                            } else if (event.target.value === "") {
+                                PF(datatable).clearFilters();
                             }
-                            return false;
                         }
                     </script>
-                    <p:inputText placeholder="Search" id="globalFilter" onkeypress="checkKey(event) ? PF('#{tableReference}').filter() : PF('#{tableReference}')" />
+                    <p:inputText placeholder="Search" id="globalFilter" onkeypress="checkKey(event, '#{tableReference}')"/>
                 </div>
 
                 <p:commandButton rendered="#{dataExporterRenderCondition}" icon="pi pi-file-excel" styleClass="ui-button-success header-excel">

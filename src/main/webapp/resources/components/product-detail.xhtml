@@ -15,54 +15,62 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit t
     </h:head>
 
     <h:body>
-        <style>
-            body .ui-datatable .ui-datatable-header {
-                background-color: dodgerblue !important;
-                color: white !important;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            }
+        <h:form id="productDetailMainForm">
+            <style>
+                body .ui-datatable .ui-datatable-header {
+                    background-color: dodgerblue !important;
+                    color: white !important;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                }
 
-            .header-actions {
-                display: flex;
-                text-align: center;
-                align-items: center;
-                gap: .3rem;
-            }
+                .header-actions {
+                    display: flex;
+                    text-align: center;
+                    align-items: center;
+                    gap: .3rem;
+                }
 
-            .header-excel {
-                width: 2rem !important;
-                height: 2rem !important;
-            }
-        </style>
+                .header-excel {
+                    width: 2rem !important;
+                    height: 2rem !important;
+                }
 
-        <p:dataTable id="productDetailDt" 
-                     widgetVar="productDetailDt" 
-                     value="#{ProductDetail.products}" 
-                     var="product">
+                .ui-datatable .ui-column-filter {
+                    display: none;
+                }
+            </style>
 
-            <ui:include src="/WEB-INF/header.component.xhtml">
-                <ui:param name="renderCondition" value="#{ProductDetail.products ne null}"/>
-                <ui:param name="title" value="Productos"/>
-                <ui:param name="tableReference" value="productDetailDt"/>
-                <ui:param name="dataExporterRenderCondition" value="#{ProductDetail.products.size() gt 0}" />
-                <ui:param name="dataExporterTarget" value="productDetailDt"/>
-                <ui:param name="dataExporterFilename" value="productos"/>
-                <ui:param name="total" value="#{ProductDetail.products.size()}"/>
-            </ui:include>
+            <p:dataTable id="productDetailDt" 
+                         widgetVar="productDetailDt" 
+                         rowKey="#{product.id}"
+                         value="#{ProductDetail.products}" 
+                         filteredValue="#{ProductDetail.productsFiltered}"
+                         var="product">
 
-            <p:column headerText="ID">
-                <h:outputText value="#{product.id}" />
-            </p:column>
+                <ui:include src="/WEB-INF/header.component.xhtml">
+                    <ui:param name="renderCondition" value="#{ProductDetail.products ne null}"/>
+                    <ui:param name="title" value="Productos"/>
+                    <ui:param name="tableReference" value="productDetailDt"/>
+                    <ui:param name="dataExporterRenderCondition" value="#{ProductDetail.products.size() gt 0}" />
+                    <ui:param name="dataExporterTarget" value="productDetailDt"/>
+                    <ui:param name="dataExporterFilename" value="productos"/>
+                    <ui:param name="total" value="#{ProductDetail.products.size()}"/>
+                </ui:include>
 
-            <p:column headerText="Description">
-                <h:outputText value="#{product.description}" />
-            </p:column>
+                <p:column headerText="ID">
+                    <h:outputText value="#{product.id}" />
+                </p:column>
 
-            <p:column headerText="Stock">
-                <h:outputText value="#{product.stock}" />
-            </p:column>
-        </p:dataTable>
+                <p:column headerText="Description" filterBy="#{product.description}">
+                    <h:outputText value="#{product.description}" />
+                </p:column>
+
+                <p:column headerText="Stock">
+                    <h:outputText value="#{product.stock}" />
+                </p:column>
+            </p:dataTable>
+        </h:form>
     </h:body>
 </html>

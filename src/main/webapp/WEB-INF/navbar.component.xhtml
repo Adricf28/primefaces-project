@@ -16,6 +16,11 @@
             padding: 1rem;
         }
 
+        .navbar button {
+            background-color: dodgerblue;
+            border: none;
+        }
+
         .menu-logo-location {
             display: flex;
             justify-content: space-between;
@@ -26,9 +31,23 @@
         .menu-logo-location p {
             font-size: 1.2rem;
         }
-        
-        .menu-logo-location button {
+
+        .actions-section {
+            display: flex;
+            gap: .7rem;
+            font-size: .8rem;
+        }
+
+        .actions-section select {
             background-color: dodgerblue;
+            border: none;
+            color: white;
+        }
+
+        .page-info {
+            display: flex;
+            flex-direction: column;
+            text-align: right;
         }
     </style>
 
@@ -40,10 +59,24 @@
         <div class="menu-logo-location">
             <p:commandButton icon="pi pi-bars" onclick="PF('sidebar').show()"/>
             <img src="resources/images/inerttia-logo.png" alt="inerttia logo" width="60px"/>
-            <p>Menu 1 > Submenu 1</p>
+            <p>Menu > Submenu</p>
         </div>
 
-        <div>
+        <div class="actions-section">
+            <div class="page-info">
+                <span>USUARIO <i class="pi pi-user"/></span>
+                <span>UBICACION <i class="pi pi-home"/></span>
+                <span>ALMACEN <i class="pi pi-building"/></span>
+            </div>
+
+            <select>
+                <option>Español</option>
+                <option>Ingles</option>
+            </select>
+
+            <p:commandButton icon="pi pi-cog"/>
+            <p:commandButton icon="pi pi-user"/>
+            <p:commandButton icon="pi pi-power-off"/>
         </div>
     </div>
 </ui:composition>

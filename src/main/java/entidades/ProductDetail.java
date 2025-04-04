@@ -21,6 +21,7 @@ import javax.faces.context.FacesContext;
 public class ProductDetail {
     private String productDescription;
     private List<Product> products;
+    private List<Product> productsFiltered;
 
     @PostConstruct
     public void init() {
@@ -54,5 +55,13 @@ public class ProductDetail {
 
     public void setProductDescription(String productDescription) {
         this.productDescription = productDescription;
+    }
+
+    public List<Product> getProductsFiltered() {
+        return productsFiltered;
+    }
+
+    public void setProductsFiltered(List<Product> productsFiltered) {
+        this.productsFiltered = productsFiltered;
     }
 }
