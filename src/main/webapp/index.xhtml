@@ -5,7 +5,7 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
     <h:head>
-        <title>Prueba</title>
+        <title>#{WindowController.properties.get('tabTitle')}</title>
     </h:head>
 
     <h:body>
@@ -133,8 +133,8 @@
                     </p:commandButton>
 
 
-                    <p:datePicker id="startDateFilter" value="#{WindowController.startDateFilter}" locale="es" monthNavigator="true" pattern="dd/MM/yyyy" placeholder="Fecha Inicio"/>
-                    <p:datePicker id="finishDateFilter" value="#{WindowController.finishDateFilter}" locale="es" monthNavigator="true" pattern="dd/MM/yyyy" placeholder="Fecha Fin"/>
+                    <p:datePicker id="startDateFilter" value="#{WindowController.startDateFilter}" locale="es" monthNavigator="true" pattern="dd/MM/yyyy" placeholder="#{WindowController.properties.get('dateGlobalFilterStart')}"/>
+                    <p:datePicker id="finishDateFilter" value="#{WindowController.finishDateFilter}" locale="es" monthNavigator="true" pattern="dd/MM/yyyy" placeholder="#{WindowController.properties.get('dateGlobalFilterFinish')}"/>
                 </p:toolbarGroup>
 
                 <p:toolbarGroup styleClass="toolbar-group">
@@ -150,7 +150,7 @@
             </p:toolbar>
 
             <p:tabView id="productTabs">
-                <p:tab id="productsTable" title="Table">
+                <p:tab id="productsTable" title="#{WindowController.properties.get('tableTabTitle')}">
                     <div class="card">
                         <p:growl id="growl" showDetail="true" skipDetailIfEqualsSummary="true"/>
 
@@ -262,7 +262,7 @@
                     </div>
                 </p:tab>
 
-                <p:tab id="productsChart" title="Chart">
+                <p:tab id="productsChart" title="#{WindowController.properties.get('chartsTabTitle')}">
                     <h:outputText value="No se encontraron registros" rendered="#{empty WindowController.products}" />
 
                     <p:barChart rendered="#{not empty WindowController.products}" id="productBarChart" model="#{WindowController.barModel}" style="width: 80%; height: 500px;"/>
@@ -270,7 +270,7 @@
                     <p:lineChart rendered="#{not empty WindowController.products}" model="#{WindowController.lineModel}" style="width: 80%; height: 500px;"/>
                 </p:tab>
 
-                <p:tab id="lazyTab" title="Lazy">
+                <p:tab id="lazyTab" title="#{WindowController.properties.get('lazyTabTitle')}">
                     <p:dataTable id="dtLazy" 
                                  rowKey="#{product.id}"
                                  widgetVar="dtLazy" 

@@ -4,6 +4,9 @@
  */
 package entidades;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,6 +15,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -72,6 +76,7 @@ public class WindowController {
     private Date finishDateFilter;
     private Map<String, Double> totalStockMap;
     private Map<String, Double> totalPriceMap;
+    private Properties properties;
 
     @PostConstruct
     public void init() {
@@ -79,6 +84,7 @@ public class WindowController {
         this.fillCategories();
         this.fillAllProducts(20);
         customizeExcel();
+        loadMessages();
     }
 
     public Type getRandomType() {
@@ -418,6 +424,15 @@ public class WindowController {
         PrimeFaces.current().dialog().openDynamic("/resources/components/product-detail.xhtml", options, params);
     }
 
+    public void loadMessages() {
+        properties = new Properties();
+        try {
+            properties.load(new FileInputStream(new File("C:\\Dev\\NetBeansProjects\\primer-proyecto\\src\\main\\resources\\resources\\messages_es.properties")));
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+    }
+
     public List<Product> getProducts() {
         return products;
     }
@@ -554,8 +569,11 @@ public class WindowController {
         this.totalPriceMap = totalPriceMap;
     }
 
-    /*
-    mostrar en el dialogo dinamico la misma tabla que categorias, con el componente header y el propio dialogo debe tener la cabecera azul tambien
-    pasarle datos inventados random
-     */
+    public Properties getProperties() {
+        return properties;
+    }
+
+    public void setProperties(Properties properties) {
+        this.properties = properties;
+    }
 }
