@@ -4,9 +4,6 @@
  */
 package entidades;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,11 +14,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -77,14 +76,17 @@ public class WindowController {
     private Map<String, Double> totalStockMap;
     private Map<String, Double> totalPriceMap;
     private Properties properties;
+    private String language;
+    @ManagedProperty("#{msg}")
+    private ResourceBundle msg;
 
     @PostConstruct
     public void init() {
+        language = "en";
         this.fillTypes();
         this.fillCategories();
         this.fillAllProducts(20);
         customizeExcel();
-        loadMessages();
     }
 
     public Type getRandomType() {
@@ -168,31 +170,31 @@ public class WindowController {
             }
         }
         if (this.selectedProduct.getId() == 0) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Producto Incompleto", "El campo id no puede estar vacio"));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, msg.getString("productIncomplete"), msg.getString("idRequired")));
             invalid = true;
         }
 
         if (idExists && !updating) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Producto Repetido", "El id ya existe"));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, msg.getString("productRepeated"), msg.getString("idExists")));
             invalid = true;
         }
 
         if (selectedProduct.getDescription().isEmpty()) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Producto Incompleto", "El campo descripcion no puede estar vacio"));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, msg.getString("productIncomplete"), msg.getString("descriptionRequired")));
             invalid = true;
         }
 
         if (selectedProduct.getDate() == null) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Producto Incompleto", "El campo date no puede estar vacio"));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, msg.getString("productIncomplete"), msg.getString("dateRequired")));
             invalid = true;
         }
 
         if (!invalid) {
             if (updating) {
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("¡Producto Actualizado!"));
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(msg.getString("productUpdated")));
             } else {
                 this.products.add(this.selectedProduct);
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("¡Producto Creado!"));
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(msg.getString("productCreated")));
             }
 
             PrimeFaces.current().executeScript("PF('manageProductDialog').hide()");
@@ -214,7 +216,7 @@ public class WindowController {
         ChartData data = new ChartData();
 
         BarChartDataSet barDataSet = new BarChartDataSet();
-        barDataSet.setLabel("Stock");
+        barDataSet.setLabel(msg.getString("stock"));
 
         List<String> labels = new ArrayList<>();
         List<Number> stock = new ArrayList<>();
@@ -287,7 +289,7 @@ public class WindowController {
         data.setLabels(labels);
 
         dataSet.setFill(false);
-        dataSet.setLabel("Price");
+        dataSet.setLabel(msg.getString("price"));
         dataSet.setBorderColor("rgb(75, 192, 192)");
         dataSet.setTension(0.1);
         data.addChartDataSet(dataSet);
@@ -335,8 +337,8 @@ public class WindowController {
         createLineModel();
         lazyModel = new LazyProductDataModel(products);
         totalStockMap = new HashMap();
-        totalStockMap.put("Total Stock", products.stream().mapToDouble(Product::getStock).sum());
-        totalStockMap.put("Total Price", products.stream().mapToDouble(Product::getPrice).sum());
+        totalStockMap.put(msg.getString("totalStock"), products.stream().mapToDouble(Product::getStock).sum());
+        totalStockMap.put(msg.getString("totalPrice"), products.stream().mapToDouble(Product::getPrice).sum());
     }
 
     public void exportExcel() {
@@ -422,15 +424,6 @@ public class WindowController {
         params.put("productDescription", Arrays.asList(paramList));
 
         PrimeFaces.current().dialog().openDynamic("/resources/components/product-detail.xhtml", options, params);
-    }
-
-    public void loadMessages() {
-        properties = new Properties();
-        try {
-            properties.load(new FileInputStream(new File("C:\\Dev\\NetBeansProjects\\primer-proyecto\\src\\main\\resources\\resources\\messages_es.properties")));
-        } catch (IOException e) {
-            System.out.println(e);
-        }
     }
 
     public List<Product> getProducts() {
@@ -576,4 +569,21 @@ public class WindowController {
     public void setProperties(Properties properties) {
         this.properties = properties;
     }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    public ResourceBundle getMsg() {
+        return msg;
+    }
+
+    public void setMsg(ResourceBundle msg) {
+        this.msg = msg;
+    }
+
 }

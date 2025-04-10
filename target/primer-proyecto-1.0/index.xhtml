@@ -5,9 +5,9 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
     <h:head>
-        <title>#{WindowController.properties.get('tabTitle')}</title>
+        <title>#{msg.tabTitle}</title>
     </h:head>
-
+    
     <h:body>
         <ui:include src="/WEB-INF/navbar.component.xhtml" />
         
@@ -133,13 +133,13 @@
                     </p:commandButton>
 
 
-                    <p:datePicker id="startDateFilter" value="#{WindowController.startDateFilter}" locale="es" monthNavigator="true" pattern="dd/MM/yyyy" placeholder="#{WindowController.properties.get('dateGlobalFilterStart')}"/>
-                    <p:datePicker id="finishDateFilter" value="#{WindowController.finishDateFilter}" locale="es" monthNavigator="true" pattern="dd/MM/yyyy" placeholder="#{WindowController.properties.get('dateGlobalFilterFinish')}"/>
+                    <p:datePicker id="startDateFilter" value="#{WindowController.startDateFilter}" locale="es" monthNavigator="true" pattern="dd/MM/yyyy" placeholder="#{msg.startDate}"/>
+                    <p:datePicker id="finishDateFilter" value="#{WindowController.finishDateFilter}" locale="es" monthNavigator="true" pattern="dd/MM/yyyy" placeholder="#{msg.finishDate}"/>
                 </p:toolbarGroup>
 
                 <p:toolbarGroup styleClass="toolbar-group">
                     <p:selectOneMenu id="type" value="#{WindowController.idTypeSelected}" style="margin-right: .3rem;">
-                        <f:selectItem itemLabel="Mostrar todos" itemValue="0" />
+                        <f:selectItem itemLabel="#{msg.showAll}" itemValue="0" />
                         <f:selectItems value="#{WindowController.types}" var="type" itemLabel="#{type.name}" itemValue="#{type.id}"/>
                     </p:selectOneMenu>
                     <p:commandButton update="mainForm" 
@@ -150,7 +150,7 @@
             </p:toolbar>
 
             <p:tabView id="productTabs">
-                <p:tab id="productsTable" title="#{WindowController.properties.get('tableTabTitle')}">
+                <p:tab id="productsTable" title="#{msg.table}">
                     <div class="card">
                         <p:growl id="growl" showDetail="true" skipDetailIfEqualsSummary="true"/>
 
@@ -160,9 +160,9 @@
                                      paginator="true" 
                                      paginatorPosition="bottom" 
                                      rows="5" 
-                                     rowsPerPageTemplate="5,7,10,{ShowAll|'All'}" 
+                                     rowsPerPageTemplate="5,7,10,{ShowAll|'#{msg.all}'}" 
                                      rowStyleClass="#{product.stock le 0 ? 'few' : product.stock ge 10 ? 'enough' : null}"
-                                     currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} products"
+                                     currentPageReportTemplate="{startRecord}-{endRecord} #{msg.of} {totalRecords} #{msg.products}"
                                      paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {CurrentPageReport}"
                                      selectionMode="single"
                                      selection="#{WindowController.selectedProduct}"
@@ -174,12 +174,12 @@
 
                             <ui:include src="/WEB-INF/header.component.xhtml">
                                 <ui:param name="renderCondition" value="#{WindowController.products ne null}"/>
-                                <ui:param name="title" value="Productos"/>
+                                <ui:param name="title" value="#{msg.products}"/>
                                 <ui:param name="iterable" value="#{WindowController.totalStockMap}"/>
                                 <ui:param name="tableReference" value="dt"/>
                                 <ui:param name="dataExporterRenderCondition" value="#{WindowController.products.size() gt 0}" />
                                 <ui:param name="dataExporterTarget" value="mainForm:productTabs:dt"/>
-                                <ui:param name="dataExporterFilename" value="productos"/>
+                                <ui:param name="dataExporterFilename" value="#{msg.products}"/>
                                 <ui:param name="dataExporterOptions" value="#{WindowController.excelOpts}"/>
                                 <ui:param name="total" value="#{WindowController.products.size()}"/>
                             </ui:include>
@@ -205,35 +205,35 @@
                                 </p:commandButton>
                             </p:column>
 
-                            <p:column headerText="Id" sortBy="#{product.id}" styleClass="right-aligned" style="width: 20px">
+                            <p:column headerText="#{msg.id}" sortBy="#{product.id}" styleClass="right-aligned" style="width: 20px">
                                 <h:outputText value="#{product.id}"/>
                             </p:column>
 
-                            <p:column headerText="Description" sortBy="#{product.description}" filterBy="#{product.description}">
+                            <p:column headerText="#{msg.description}" sortBy="#{product.description}" filterBy="#{product.description}">
                                 <h:outputText value="#{product.description}" />
                             </p:column>
 
-                            <p:column headerText="Date"  sortBy="#{product.date}" filterBy="#{product.dateFormatted}">
+                            <p:column headerText="#{msg.date}"  sortBy="#{product.date}" filterBy="#{product.dateFormatted}">
                                 <h:outputText value="#{product.date}" >
                                     <f:convertDateTime pattern="dd/MM/yyyy"/>
                                 </h:outputText>
                             </p:column>
 
-                            <p:column headerText="Price" sortBy="#{product.price}" styleClass="right-aligned">
+                            <p:column headerText="#{msg.price}" sortBy="#{product.price}" styleClass="right-aligned">
                                 <h:outputText value="#{product.price}">
                                     <f:convertNumber pattern="#0.00"/>
                                 </h:outputText>
                             </p:column>
 
-                            <p:column exportValue="#{product.enBaja ? 'Yes' : 'No'}" headerText="EnBaja" sortBy="#{product.enBaja}" styleClass="center-aligned">
+                            <p:column exportValue="#{product.enBaja ? 'Yes' : 'No'}" headerText="#{msg.enBaja}" sortBy="#{product.enBaja}" styleClass="center-aligned">
                                 <p:selectBooleanCheckbox value="#{product.enBaja}" disabled="true" styleClass="readonly"/>
                             </p:column>
 
-                            <p:column headerText="Type" sortBy="#{product.type.name}" filterBy="#{product.type.name}">
+                            <p:column headerText="#{msg.type}" sortBy="#{product.type.name}" filterBy="#{product.type.name}">
                                 <h:outputText value="#{product.type.name}" />
                             </p:column>
 
-                            <p:column headerText="Stock" sortBy="#{product.stock}" styleClass="right-aligned">
+                            <p:column headerText="#{msg.stock}" sortBy="#{product.stock}" styleClass="right-aligned">
                                 <h:outputText value="#{product.stock}" />
                             </p:column>
                         </p:dataTable>
@@ -262,15 +262,15 @@
                     </div>
                 </p:tab>
 
-                <p:tab id="productsChart" title="#{WindowController.properties.get('chartsTabTitle')}">
-                    <h:outputText value="No se encontraron registros" rendered="#{empty WindowController.products}" />
+                <p:tab id="productsChart" title="#{msg.charts}">
+                    <h:outputText value="#{msg.noRegistersFound}" rendered="#{empty WindowController.products}" />
 
                     <p:barChart rendered="#{not empty WindowController.products}" id="productBarChart" model="#{WindowController.barModel}" style="width: 80%; height: 500px;"/>
 
                     <p:lineChart rendered="#{not empty WindowController.products}" model="#{WindowController.lineModel}" style="width: 80%; height: 500px;"/>
                 </p:tab>
 
-                <p:tab id="lazyTab" title="#{WindowController.properties.get('lazyTabTitle')}">
+                <p:tab id="lazyTab" title="#{msg.lazy}">
                     <p:dataTable id="dtLazy" 
                                  rowKey="#{product.id}"
                                  widgetVar="dtLazy" 
@@ -279,9 +279,9 @@
                                  virtualScroll="true"
                                  scrollHeight="500"
                                  rows="10" 
-                                 rowsPerPageTemplate="5,7,10,{ShowAll|'All'}" 
+                                 rowsPerPageTemplate="5,7,10,{ShowAll|'#{msg.all}'}" 
                                  rowStyleClass="#{product.stock le 0 ? 'few' : product.stock ge 10 ? 'enough' : null}"
-                                 currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} products"
+                                 currentPageReportTemplate="{startRecord}-{endRecord} #{msg.of} {totalRecords} #{msg.products}"
                                  paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {CurrentPageReport}"
                                  selectionMode="single"
                                  selection="#{WindowController.selectedProduct}"
@@ -292,12 +292,12 @@
 
                         <ui:include src="/WEB-INF/header.component.xhtml" >
                             <ui:param name="renderCondition" value="#{not empty WindowController.products}"/>
-                            <ui:param name="title" value="Productos"/>
+                            <ui:param name="title" value="#{msg.products}"/>
                             <ui:param name="iterable" value="#{WindowController.totalStockMap}"/>
                             <ui:param name="tableReference" value="dtLazy"/>
                             <ui:param name="dataExporterRenderCondition" value="#{WindowController.products.size() ge 1}" />
                             <ui:param name="dataExporterTarget" value="mainForm:productTabs:dt"/>
-                            <ui:param name="dataExporterFilename" value="productos"/>
+                            <ui:param name="dataExporterFilename" value="#{msg.products}"/>
                             <ui:param name="dataExporterOptions" value="#{WindowController.excelOpts}"/>
                             <ui:param name="total" value="#{WindowController.products.size()}"/>
                         </ui:include>
@@ -315,7 +315,7 @@
                                              actionListener="#{WindowController.deleteProduct(product)}" 
                                              styleClass="edit-button rounded-button ui-button-warning action-btns"
                                              update="mainForm">
-                                <p:confirm header="Confirm Delete" message="Are you sure to delete the product?" icon="pi pi-exclamation-triangle" />
+                                <p:confirm header="#{msg.confirmDelete}" message="#{msg.confirmDeleteContent}" icon="pi pi-exclamation-triangle" />
                             </p:commandButton>
                         </p:column>
 
@@ -380,57 +380,57 @@
         </h:form>
 
         <h:form id="dialogs">
-            <p:dialog header="#{WindowController.updating ? 'Update product' : 'Create product'}" showEffect="fade" modal="true" responsive="true" widgetVar="manageProductDialog" styleClass="create-product">
+            <p:dialog header="#{WindowController.updating ? msg.updateProduct : msg.createProduct}" showEffect="fade" modal="true" responsive="true" widgetVar="manageProductDialog" styleClass="create-product">
                 <p:outputPanel id="manage-product-content" class="ui-fluid">
                     <p:outputPanel rendered="#{not empty WindowController.selectedProduct}">
                         <div class="field">
-                            <p:outputLabel styleClass="form-label" for="id" value="ID"/>
+                            <p:outputLabel styleClass="form-label" for="id" value="#{msg.id}"/>
                             <p:inputNumber disabled="#{WindowController.selectedProduct.getId() != 0}" emptyValue="zero" inputStyleClass="right-aligned" id="id" value="#{WindowController.selectedProduct.id}" />
                         </div>
 
                         <div class="field">
-                            <p:outputLabel styleClass="form-label" for="description" value="Description" />
+                            <p:outputLabel styleClass="form-label" for="description" value="#{msg.description}" />
                             <p:inputTextarea id="description" value="#{WindowController.selectedProduct.description}" />
                         </div>
 
                         <div class="field">
-                            <p:outputLabel styleClass="form-label" for="date" value="Date" />
+                            <p:outputLabel styleClass="form-label" for="date" value="#{msg.date}" />
                             <p:datePicker id="date" locale="es" monthNavigator="true" pattern="dd/MM/yyyy" value="#{WindowController.selectedProduct.date}" />
                         </div>
 
                         <div class="field">
-                            <p:outputLabel styleClass="form-label" for="price" value="Price"/>
+                            <p:outputLabel styleClass="form-label" for="price" value="#{msg.price}"/>
                             <p:inputNumber emptyValue="zero" inputStyleClass="right-aligned" id="price" symbol="€" symbolPosition="s" value="#{WindowController.selectedProduct.price}" />
                         </div>
 
                         <div class="field">
-                            <p:outputLabel styleClass="form-label" for="enBaja" value="En Baja"/>
+                            <p:outputLabel styleClass="form-label" for="enBaja" value="#{msg.enBaja}"/>
                             <p:selectBooleanCheckbox id="enBaja" disabled="false" value="#{WindowController.selectedProduct.enBaja}" />
                         </div>
 
                         <div class="field">
-                            <p:outputLabel styleClass="form-label" for="type" value="Type"/>
+                            <p:outputLabel styleClass="form-label" for="type" value="#{msg.type}"/>
                             <p:selectOneMenu id="type" value="#{WindowController.idTypeSelected}">
                                 <f:selectItems value="#{WindowController.types}" var="type" itemLabel="#{type.name}" itemValue="#{type.id}"/>
                             </p:selectOneMenu>
                         </div>
 
                         <div class="field">
-                            <p:outputLabel styleClass="form-label" for="stock" value="Stock"/>
+                            <p:outputLabel styleClass="form-label" for="stock" value="#{msg.stock}"/>
                             <p:inputNumber emptyValue="zero" inputStyleClass="right-aligned" id="stock" value="#{WindowController.selectedProduct.stock}" />
                         </div>
                     </p:outputPanel>
                 </p:outputPanel>
 
                 <f:facet name="footer">
-                    <p:commandButton value="Save" actionListener="#{WindowController.saveProduct}" update="mainForm"/>
+                    <p:commandButton value="#{msg.save}" actionListener="#{WindowController.saveProduct}" update="mainForm"/>
                 </f:facet>
             </p:dialog>
 
             <p:confirmDialog global="true">
-                <p:commandButton value="Yes" type="button"
+                <p:commandButton value="#{msg.yes}" type="button"
                                  styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
-                <p:commandButton value="No" type="button"
+                <p:commandButton value="#{msg.no}" type="button"
                                  styleClass="ui-confirmdialog-no" icon="pi pi-times" />
             </p:confirmDialog> 
         </h:form>

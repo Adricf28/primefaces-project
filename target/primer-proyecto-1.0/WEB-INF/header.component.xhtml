@@ -37,7 +37,7 @@
                             }
                         }
                     </script>
-                    <p:inputText placeholder="Search" id="globalFilter" onkeypress="checkKey(event, '#{tableReference}')"/>
+                    <p:inputText placeholder="#{msg.search}" id="globalFilter" onkeypress="checkKey(event, '#{tableReference}')"/>
                 </div>
 
                 <p:commandButton rendered="#{dataExporterRenderCondition}" icon="pi pi-file-excel" styleClass="ui-button-success header-excel">
@@ -47,7 +47,7 @@
                                     options="#{dataExporterOptions}"/>
                 </p:commandButton>
 
-                <h:outputText value="Total: #{total}"/>
+                <h:outputText value="#{msg.total}: #{total}"/>
             </div>
         </h:panelGroup>
     </f:facet>

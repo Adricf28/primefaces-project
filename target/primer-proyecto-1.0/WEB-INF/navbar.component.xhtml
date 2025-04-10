@@ -69,10 +69,10 @@
                 <span>ALMACEN <i class="pi pi-building"/></span>
             </div>
 
-            <select>
-                <option>Español</option>
-                <option>Ingles</option>
-            </select>
+            <p:selectOneMenu  value="#{WindowController.language}">
+                <f:selectItem itemLabel="Español" itemValue="es"/>
+                <f:selectItem itemLabel="English" itemValue="en"/>
+            </p:selectOneMenu>
 
             <p:commandButton icon="pi pi-cog"/>
             <p:commandButton icon="pi pi-user"/>
